@@ -9,6 +9,12 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="flutter_app_to_render"
         android:icon="@mipmap/ic_rb_launcher">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA-ILRTlV8Gd-GvTXEP1oUQej4Q9ZDhe1k" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -26,9 +32,13 @@
               />
 
             <!--here i am providing the api key for google maps-->
-            <meta-data
+            <!--<meta-data
                 android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyA-ILRTlV8Gd-GvTXEP1oUQej4Q9ZDhe1k" />
+                android:value="AIzaSyA-ILRTlV8Gd-GvTXEP1oUQej4Q9ZDhe1k" />-->
+
+          <!--  <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="AIzaSyA-ILRTlV8Gd-GvTXEP1oUQej4Q9ZDhe1k" />-->
 
             <!-- Displays an Android View that continues showing the launch screen
                  Drawable until Flutter paints its first frame, then this splash

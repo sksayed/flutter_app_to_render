@@ -6,3 +6,8 @@ abstract class AppstateEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class ViewTypeButtonClickedEvent extends AppstateEvent {
+  @override
+  List<Object> get props => [];
+}

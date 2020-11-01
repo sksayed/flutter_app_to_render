@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text(
-          "Spalsh Screen",
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    return SafeArea(
+      child: Scaffold(
+        body: Image.asset(
+          "pic/splash_screen.png",
+          fit: BoxFit.fill,
+          width: double.infinity,
+          height: double.infinity,
         ),
       ),
     );

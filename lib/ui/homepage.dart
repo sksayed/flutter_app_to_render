@@ -13,7 +13,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'default_home_page.dart';
 
-
 class HomePage extends StatefulWidget {
   HomePage({
     Key key,
@@ -169,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                     //move to next page
                     final AuthenticationBloc authBloc =
                         BlocProvider.of<AuthenticationBloc>(context);
-                    Navigator.pushNamed(context, RouteName.anotherpage,
+                    Navigator.pushNamed(context, RouteName.placeTrackerHomePage,
                         arguments: {
                           "name": "this is from Home page",
                           "authBloc": authBloc

@@ -11,12 +11,12 @@ abstract class AppstateState extends Equatable {
 }
 
 @immutable
-class AppstateInitial extends AppstateState {
+class AppstateInitialState extends AppstateState {
   final List<Place> places;
   final PlaceCategory selectedCategory;
   final PlaceTrackerViewType viewType;
 
-  AppstateInitial(
+  AppstateInitialState(
       {this.places,
       this.selectedCategory,
       @required this.viewType,
@@ -28,7 +28,7 @@ class AppstateInitial extends AppstateState {
 }
 
 @immutable
-class AppstateViewTypeChangedState extends AppstateInitial {
+class AppstateViewTypeChangedState extends AppstateInitialState {
   AppstateViewTypeChangedState(
       {@required List<Place> places,
       @required PlaceCategory selectedCategory,
@@ -42,4 +42,21 @@ class AppstateViewTypeChangedState extends AppstateInitial {
 
   @override
   List<Object> get props => [places, selectedCategory, viewType, viewTypeIcon];
+}
+
+class PlaceCategoryChangedState extends AppstateState {
+  final PlaceCategory placeCategory;
+
+  PlaceCategoryChangedState(IconData viewTypeIcon, @required this.placeCategory)
+      : assert(viewTypeIcon != null),
+        assert(placeCategory != null),
+        super(viewTypeIcon);
+
+  @override
+  List<Object> get props => [placeCategory, viewTypeIcon];
+}
+
+class PlaceCategoryInitialState extends PlaceCategoryChangedState {
+  PlaceCategoryInitialState(IconData viewTypeIcon, PlaceCategory placeCategory)
+      : super(viewTypeIcon, placeCategory);
 }

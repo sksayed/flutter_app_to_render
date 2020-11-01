@@ -70,6 +70,15 @@ class _PlaceMapState extends State<PlaceMap> {
     return marker;
   }
 
+  void _changeMapType() {
+/*    final nextType ;*/
+
+    setState(() {
+      _currentMapType =
+          MapType.values[(_currentMapType.index + 1) % MapType.values.length];
+    });
+  }
+
   static Future<BitmapDescriptor> _getPlaceMarkerIcon(
       BuildContext contextRecieved, PlaceCategory category) async {
     switch (category) {
@@ -93,8 +102,6 @@ class _PlaceMapState extends State<PlaceMap> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    //at first we will be showing a single map on the screen
     return Center(
       child: Stack(
         children: [
@@ -108,10 +115,25 @@ class _PlaceMapState extends State<PlaceMap> {
               _lastMapPosition = cameraPosition.target;
             },
           ),
-          _CreateCategoryButtonBar(
-            selectedPlaceCategory: _appstateBloc.selectedCategory,
-            visibilility: _pendingMarker == null,
-            onPressed: _switchSelectedCategory,
+          BlocBuilder<AppstateBloc, AppstateState>(
+            builder: (_, state) {
+              PlaceCategory category = _appstateBloc.selectedCategory;
+              if (state is PlaceCategoryChangedState) {
+                category = state.placeCategory;
+              }
+              if (state is PlaceCategoryInitialState) {
+                category = state.placeCategory;
+              }
+              _showPlacesForSelectedCategory(category);
+              return _CreateCategoryButtonBar(
+                selectedPlaceCategory: category,
+                visibilility: _pendingMarker == null,
+                onPressed: _switchSelectedCategory,
+              );
+            },
+          ),
+          _MyFabs(
+            onMapChanngeButtonPressed: _changeMapType,
           ),
         ],
       ),
@@ -119,7 +141,7 @@ class _PlaceMapState extends State<PlaceMap> {
   }
 
   Future<void> _switchSelectedCategory(PlaceCategory category) async {
-    _appstateBloc.selectedCategory = category;
+    _appstateBloc.add(PlaceCategoryChangedEvent(category));
     await _showPlacesForSelectedCategory(category);
   }
 
@@ -157,15 +179,16 @@ class _PlaceMapState extends State<PlaceMap> {
   }
 
   Future<void> _showPlacesForSelectedCategory(PlaceCategory category) async {
-    setState(() {
-      for (var marker in List.of(_markedPlaces.keys)) {
-        final place = _markedPlaces[marker];
-        final updatedMarker =
-            marker.copyWith(visibleParam: place.category == category);
-        _updateMarker(
-            marker: marker, updatedMarker: updatedMarker, place: place);
-      }
-    });
+    /* setState(() {
+
+    });*/
+
+    for (var marker in List.of(_markedPlaces.keys)) {
+      final place = _markedPlaces[marker];
+      final updatedMarker =
+          marker.copyWith(visibleParam: place.category == category);
+      _updateMarker(marker: marker, updatedMarker: updatedMarker, place: place);
+    }
 
     await _zoomTofitPlaces(
         _getPlacesForCategory(category, markedPlaces.values.toList()));
@@ -242,6 +265,53 @@ class _CreateCategoryButtonBar extends StatelessWidget {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _MyFabs extends StatelessWidget {
+  final VoidCallback onMapChanngeButtonPressed;
+
+  const _MyFabs({Key key, this.onMapChanngeButtonPressed})
+      : assert(onMapChanngeButtonPressed != null),
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.topRight,
+      margin: EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FloatingActionButton(
+            onPressed: onMapChanngeButtonPressed,
+            heroTag: "toggle_map_type_button",
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            mini: true,
+            backgroundColor: Colors.lightBlue,
+            child: const Icon(
+              Icons.layers,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          /* FloatingActionButton(
+            onPressed: null,
+            heroTag: "add_location_type_button",
+            backgroundColor: Colors.lightBlue,
+            mini: true,
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            child: const Icon(
+              Icons.add_location,
+              color: Colors.white,
+            ),
+          )*/
+        ],
       ),
     );
   }

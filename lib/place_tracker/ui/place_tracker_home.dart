@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_to_render/place_tracker/app_bloc/appstate_bloc.dart';
 import 'package:flutter_app_to_render/place_tracker/ui/place_list.dart';
 import 'package:flutter_app_to_render/place_tracker/ui/place_map.dart';
+import 'package:flutter_app_to_render/place_tracker/ui/place_tracker_list.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -22,6 +23,8 @@ class _PlaceTrackerHomePageState extends State<PlaceTrackerHomePage> {
   @override
   void initState() {
     _appstateBloc = AppstateBloc();
+    _appstateBloc.add(AppStateInitailEvent());
+    _appstateBloc.add(PlaceCategoryInintalEvent());
     super.initState();
   }
 
@@ -42,7 +45,7 @@ class _PlaceTrackerHomePageState extends State<PlaceTrackerHomePage> {
           actions: [
             //inside actions only the image button will change
             BlocBuilder<AppstateBloc, AppstateState>(builder: (context, state) {
-              if (state is AppstateInitial) {
+              if (state is AppstateInitialState) {
                 return Padding(
                   padding: EdgeInsets.only(left: 8, right: 8),
                   child: IconButton(
@@ -77,7 +80,7 @@ class _PlaceTrackerHomePageState extends State<PlaceTrackerHomePage> {
               index: val,
               children: [
                 PlaceMap(center: const LatLng(45.521563, -122.677433)),
-                PlaceList()
+                PlaceTrackerList(),
               ],
             );
           },

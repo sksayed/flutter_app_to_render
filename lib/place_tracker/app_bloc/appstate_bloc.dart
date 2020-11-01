@@ -19,7 +19,7 @@ class AppstateBloc extends Bloc<AppstateEvent, AppstateState> {
       this.viewTypeIcon = Icons.map})
       : assert(places != null),
         assert(selectedCategory != null),
-        super(AppstateInitial(
+        super(AppstateInitialState(
             places: places,
             selectedCategory: selectedCategory,
             viewType: viewType,
@@ -46,6 +46,19 @@ class AppstateBloc extends Bloc<AppstateEvent, AppstateState> {
           selectedCategory: selectedCategory,
           viewTypeIcon: this.viewTypeIcon);
     }
+
+    if (event is PlaceCategoryChangedEvent) {
+      _changeCategoryType(event.placeCategory);
+      yield PlaceCategoryChangedState(this.viewTypeIcon, this.selectedCategory);
+    }
+
+    if (event is PlaceCategoryInintalEvent) {
+      yield PlaceCategoryInitialState(this.viewTypeIcon, this.selectedCategory);
+    }
+  }
+
+  void _changeCategoryType(PlaceCategory placeCategory) {
+    this.selectedCategory = placeCategory;
   }
 
   void _toggleViewType() {

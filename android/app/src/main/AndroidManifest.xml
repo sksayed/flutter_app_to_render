@@ -7,8 +7,10 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="flutter_app_to_render"
-        android:icon="@mipmap/ic_rb_launcher">
+        android:label="VMS"
+        android:icon="@mipmap/ic_rb_launcher_2"
+        android:roundIcon="@drawable/ic_round_2"
+        >
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

@@ -174,7 +174,15 @@ class _HomePageState extends State<HomePage> {
                           "authBloc": authBloc
                         });
                   },
-                )
+                ),
+                ListTile(
+                  title: Text("Move to LeafLet Map"),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.pushNamed(context, RouteName.leafletMapHomePage);
+                  },
+                ),
               ],
             ),
           ),

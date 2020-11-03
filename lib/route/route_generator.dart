@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_to_render/authentication/authentication_bloc.dart';
+import 'package:flutter_app_to_render/leaflet_map/ui/leaflet_map.dart';
 import 'package:flutter_app_to_render/place_tracker/ui/place_tracker_home.dart';
 import 'package:flutter_app_to_render/route/route_name.dart';
 import 'package:flutter_app_to_render/ui/another_page.dart';
@@ -35,6 +36,10 @@ class RouteGenerator {
 
       case RouteName.initial:
         return MaterialPageRoute(builder: (_) => SplashPage());
+        break;
+
+      case RouteName.leafletMapHomePage:
+        return MaterialPageRoute(builder: (_) => LeafLetMapHomePage());
         break;
 
       default:

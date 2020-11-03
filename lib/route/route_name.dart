@@ -3,4 +3,5 @@ class RouteName {
   static const String home = "/home";
   static const String anotherpage = "/anotherPage";
   static const String placeTrackerHomePage = "/placeTrackerHomePage";
+  static const String leafletMapHomePage = "/leafletMapHomePage";
 }

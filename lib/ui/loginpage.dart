@@ -39,6 +39,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Login"),
+        centerTitle: true,
       ),
       body: LoginForm(
         loginBloc: _loginBloc,

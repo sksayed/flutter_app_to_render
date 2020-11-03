@@ -5,7 +5,6 @@ import 'package:flutter_app_to_render/login/login_event.dart';
 import 'package:flutter_app_to_render/login/login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class LoginForm extends StatefulWidget {
   final LoginBloc loginBloc;
   final AuthenticationBloc authenticationBloc;
@@ -58,28 +57,34 @@ class _LoginFormState extends State<LoginForm> {
         }
 
         return Form(
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: 'username'),
-                controller: _usernameController,
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16, 50, 16, 0),
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'username'),
+                    controller: _usernameController,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'password'),
+                    controller: _passwordController,
+                    obscureText: true,
+                  ),
+                  RaisedButton(
+                    onPressed: loginState is! LoginLoading
+                        ? _onLoginButtonPressed
+                        : null,
+                    child: Text('Login'),
+                  ),
+                  Container(
+                    child: loginState is LoginLoading
+                        ? CircularProgressIndicator()
+                        : null,
+                  ),
+                ],
               ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'password'),
-                controller: _passwordController,
-                obscureText: true,
-              ),
-              RaisedButton(
-                onPressed:
-                    loginState is! LoginLoading ? _onLoginButtonPressed : null,
-                child: Text('Login'),
-              ),
-              Container(
-                child: loginState is LoginLoading
-                    ? CircularProgressIndicator()
-                    : null,
-              ),
-            ],
+            ),
           ),
         );
       },

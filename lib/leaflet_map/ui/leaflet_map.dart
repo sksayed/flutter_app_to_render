@@ -19,7 +19,8 @@ class LeafLetMapHomePage extends StatefulWidget {
   _LeafLetMapHomePageState createState() => _LeafLetMapHomePageState();
 }
 
-class _LeafLetMapHomePageState extends State<LeafLetMapHomePage> {
+class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
+    with TickerProviderStateMixin {
   LefletmapBloc _lefletmapBloc;
   LatLng _previousPoint;
   MapController _mapController;
@@ -28,6 +29,7 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage> {
   PlaceCategory _category = PlaceCategory.favorite;
   BuildContext _buildContext;
   List<Place> _places;
+  double _previousPointZoom = 10;
 
   @override
   void initState() {
@@ -92,7 +94,7 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage> {
           return GestureDetector(
             child: _getIconForMarker(_context, category),
             onTap: () {
-              _mapController.move(_getLatLngFromPlace(place),20);
+              _animatedMapMove(_getLatLngFromPlace(place), 16);
             },
           );
         });
@@ -123,6 +125,90 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage> {
     return LatLng(place.latitude, place.longitude);
   }
 
+  void _animatedMapMove(LatLng destLocation, double destZoom) {
+    // Create some tweens. These serve to split up the transition from one location to another.
+    // In our case, we want to split the transition be<tween> our current map center and the destination.
+    print("current map center is " + _mapController.center.toString());
+    print("latlng of destination is  " + destLocation.toString());
+
+    _previousPoint = destLocation;
+    _previousPointZoom = _mapController.zoom;
+    final _latTween = Tween<double>(
+        begin: _mapController.center.latitude, end: destLocation.latitude);
+    final _lngTween = Tween<double>(
+        begin: _mapController.center.longitude, end: destLocation.longitude);
+    final _zoomTween = Tween<double>(begin: _mapController.zoom, end: destZoom);
+
+    // Create a animation controller that has a duration and a TickerProvider.
+    var controller = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    // The animation determines what path the animation will take. You can try different Curves values, although I found
+    // fastOutSlowIn to be my favorite.
+    Animation<double> animation =
+        CurvedAnimation(parent: controller, curve: Curves.easeInSine);
+
+    controller.addListener(() {
+      _mapController.move(
+          LatLng(_latTween.evaluate(animation), _lngTween.evaluate(animation)),
+          _zoomTween.evaluate(animation));
+    });
+
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.dispose();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
+  }
+
+  void _animatedMapMoveBack(LatLng destLocation, double destZoom) {
+    // Create some tweens. These serve to split up the transition from one location to another.
+    // In our case, we want to split the transition be<tween> our current map center and the destination.
+
+    final _latTween = Tween<double>(
+        begin: _mapController.center.latitude, end: destLocation.latitude);
+    final _lngTween = Tween<double>(
+        begin: _mapController.center.longitude, end: destLocation.longitude);
+    final _zoomTween = Tween<double>(begin: _mapController.zoom, end: destZoom);
+
+    // Create a animation controller that has a duration and a TickerProvider.
+    var controller = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    // The animation determines what path the animation will take. You can try different Curves values, although I found
+    // fastOutSlowIn to be my favorite.
+    Animation<double> animation =
+        CurvedAnimation(parent: controller, curve: Curves.easeOutSine);
+
+    controller.addListener(() {
+      _mapController.move(
+          LatLng(_latTween.evaluate(animation), _lngTween.evaluate(animation)),
+          _zoomTween.evaluate(animation));
+    });
+
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        /*_zoomToFitPlaces(_places);
+        _previousPointZoom = _mapController.zoom;*/
+        controller.dispose();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
+  }
+
+  void _animateBackToFitZoom() {
+    _animatedMapMoveBack(_previousPoint, _previousPointZoom);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -150,8 +236,9 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage> {
                       child: FlutterMap(
                         options: MapOptions(
                           center: _previousPoint,
-                          minZoom: 0,
-                          maxZoom: 23,
+                          minZoom: 5,
+                          maxZoom: 18,
+                          onTap: (latlng) => {_animateBackToFitZoom()},
                         ),
                         mapController: _mapController,
                         /*layers: [

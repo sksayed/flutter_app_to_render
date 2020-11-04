@@ -179,10 +179,6 @@ class _PlaceMapState extends State<PlaceMap> {
   }
 
   Future<void> _showPlacesForSelectedCategory(PlaceCategory category) async {
-    /* setState(() {
-
-    });*/
-
     for (var marker in List.of(_markedPlaces.keys)) {
       final place = _markedPlaces[marker];
       final updatedMarker =

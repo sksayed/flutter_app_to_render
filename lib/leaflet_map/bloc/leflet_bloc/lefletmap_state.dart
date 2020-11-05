@@ -34,3 +34,12 @@ class MapPlaceCategoryChangedState extends LefletmapInitialState {
         assert(placeCategory != null),
         super(places: places, placeCategory: placeCategory);
 }
+
+class MapDetailsPageRequestState extends LefletmapState {
+  final Place place;
+
+  MapDetailsPageRequestState({@required this.place}) : assert(place != null);
+
+  @override
+  List<Object> get props => [place];
+}

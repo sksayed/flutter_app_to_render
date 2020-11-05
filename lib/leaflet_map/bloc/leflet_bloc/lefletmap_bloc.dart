@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app_to_render/place_tracker/domain/place.dart';
 import 'package:flutter_app_to_render/place_tracker/repo/stub_data.dart';
+import 'package:latlong/latlong.dart';
 
 part 'lefletmap_event.dart';
 
@@ -44,6 +45,15 @@ class LefletmapBloc extends Bloc<LefletmapEvent, LefletmapState> {
               .where((element) => element.category == this.placeCategory)
               .toList(),
           placeCategory: this.placeCategory);
+    }
+
+    if (event is MapDetailsPageRequestEvent) {
+      yield MapDetailsPageRequestState(
+          place: places
+              .where((place) =>
+                  place.longitude == event.point.longitude &&
+                  place.latitude == event.point.latitude)
+              .single);
     }
   }
 

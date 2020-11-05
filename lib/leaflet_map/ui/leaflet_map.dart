@@ -2,11 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app_to_render/leaflet_map/bloc/leflet_bloc/lefletmap_bloc.dart';
+import 'package:flutter_app_to_render/leaflet_map/ui/example_pop_up.dart';
 import 'package:flutter_app_to_render/place_tracker/domain/place.dart';
 import 'package:flutter_app_to_render/route/route_name.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
+import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 
 class LeafLetMapHomePage extends StatefulWidget {
   final LatLng center;
@@ -23,17 +25,17 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
     with TickerProviderStateMixin {
   LefletmapBloc _lefletmapBloc;
   LatLng _previousPoint;
-  MapController _mapController;
+  final MapController _mapController = MapController();
   List<Marker> _mapMarkers = [];
-  Map<Marker, Place> _markedPlaces = {};
+  Map<Place, Marker> _markedPlaces = {};
   PlaceCategory _category = PlaceCategory.favorite;
   BuildContext _buildContext;
   List<Place> _places;
   double _previousPointZoom = 10;
+  final PopupController _popupController = PopupController();
 
   @override
   void initState() {
-    _mapController = MapController();
     _places = [];
     _buildContext = context;
     _lefletmapBloc = LefletmapBloc();
@@ -98,7 +100,7 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
             },
           );
         });
-    _markedPlaces[marker] = place;
+    _markedPlaces[place] = marker;
     return marker;
   }
 
@@ -157,6 +159,13 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
 
     animation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
+        final place = _places
+            .where((element) =>
+                element.latitude == destLocation.latitude &&
+                element.longitude == destLocation.longitude)
+            .single;
+        Marker marker = _markedPlaces[place];
+        _popupController.showPopupFor(marker);
         controller.dispose();
       } else if (status == AnimationStatus.dismissed) {
         controller.dispose();
@@ -194,8 +203,9 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
 
     animation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        /*_zoomToFitPlaces(_places);
-        _previousPointZoom = _mapController.zoom;*/
+        /* _previousPointZoom = _mapController.zoom;
+        * _zoomToFitPlaces(_places);
+        * */
         controller.dispose();
       } else if (status == AnimationStatus.dismissed) {
         controller.dispose();
@@ -230,27 +240,43 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
                     _category = state.placeCategory;
                     _generateMarkers(_places);
                   }
+
+                  if (state is MapDetailsPageRequestState) {
+                    Navigator.pushNamed(context, RouteName.anotherpage,
+                        arguments: {"place": state.place});
+                  }
                   return Visibility(
                     visible: true,
                     child: Flexible(
                       child: FlutterMap(
                         options: MapOptions(
-                          center: _previousPoint,
-                          minZoom: 5,
-                          maxZoom: 18,
-                          onTap: (latlng) => {_animateBackToFitZoom()},
-                        ),
+                            center: _previousPoint,
+                            minZoom: 5,
+                            maxZoom: 18,
+                            onTap: (latlng) => {
+                                  _animateBackToFitZoom(),
+                                  _popupController.hidePopup()
+                                },
+                            plugins: [
+                              PopupMarkerPlugin(),
+                            ]),
                         mapController: _mapController,
-                        /*layers: [
-                          TileLayerOptions(
+                        layers: [
+                          /* TileLayerOptions(
                             urlTemplate:
                                 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                             subdomains: ['a', 'b', 'c'],
                             tileProvider: NonCachingNetworkTileProvider(),
                             keepBuffer: 5,
-                          ),
-                          MarkerLayerOptions(markers: _mapMarkers),
-                        ]*/
+                          ),*/
+                          /*MarkerLayerOptions(markers: _mapMarkers) , */
+                          PopupMarkerLayerOptions(
+                            popupBuilder: (BuildContext _ctx, Marker marker) =>
+                                ExamplePopup(marker),
+                            popupController: _popupController,
+                            markers: _mapMarkers,
+                          )
+                        ],
                         children: [
                           TileLayerWidget(
                             options: TileLayerOptions(
@@ -261,9 +287,7 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
                               keepBuffer: 5,
                             ),
                           ),
-                          MarkerLayerWidget(
-                              options:
-                                  MarkerLayerOptions(markers: _mapMarkers)),
+                          /* MarkerLayerWidget(options: PopupMarkerLayerOptions()),*/
                           _CreateBottomButtonBar(
                               placeCategory: _category,
                               onButtonPressed: _bottomButtonHasbeenPressed),

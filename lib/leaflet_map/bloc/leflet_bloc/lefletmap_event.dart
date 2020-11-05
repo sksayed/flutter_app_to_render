@@ -15,3 +15,11 @@ class MapPlaceCategoryChangedEvent extends LefletmapEvent {
   MapPlaceCategoryChangedEvent(this.placeCategory)
       : assert(placeCategory != null);
 }
+
+class MapDetailsPageRequestEvent extends LefletmapEvent {
+  final LatLng point;
+  MapDetailsPageRequestEvent({@required this.point}) : assert(point != null);
+
+  @override
+  List<Object> get props => [point];
+}

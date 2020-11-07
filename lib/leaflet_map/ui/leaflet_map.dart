@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app_to_render/leaflet_map/bloc/leflet_bloc/lefletmap_bloc.dart';
+import 'package:flutter_app_to_render/leaflet_map/moving_car_data_repo/stream_data_repo.dart';
 import 'package:flutter_app_to_render/leaflet_map/ui/example_pop_up.dart';
 import 'package:flutter_app_to_render/place_tracker/domain/place.dart';
 import 'package:flutter_app_to_render/route/route_name.dart';
@@ -23,6 +25,8 @@ class LeafLetMapHomePage extends StatefulWidget {
 
 class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
     with TickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   LefletmapBloc _lefletmapBloc;
   LatLng _previousPoint;
   final MapController _mapController = MapController();
@@ -32,6 +36,10 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
   BuildContext _buildContext;
   List<Place> _places;
   double _previousPointZoom = 10;
+  Stream<LatLng> streamsData;
+
+  StreamSubscription<LatLng> _streamSubscription;
+
   final PopupController _popupController = PopupController();
 
   @override
@@ -234,12 +242,22 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
     });
   }
 
+  void _showSnackBarWithLatLnag(LatLng givenLatln) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text(
+            "Latitude is ${givenLatln.latitude} and Longitude is ${givenLatln.longitude}")));
+    print(
+        "Latitude is ${givenLatln.latitude} and Longitude is ${givenLatln.longitude}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _lefletmapBloc,
       child: SafeArea(
         child: Scaffold(
+          key: _scaffoldKey,
           body: Column(
             children: [
               BlocBuilder<LefletmapBloc, LefletmapState>(
@@ -270,8 +288,9 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
                             minZoom: 5,
                             maxZoom: 18,
                             onTap: (latlng) => {
-                                  _animateBackToFitZoom(),
-                                  _popupController.hidePopup()
+                                  /*  _animateBackToFitZoom(),
+                                  _popupController.hidePopup(), */
+                                  _showSnackBarWithLatLnag(latlng)
                                 },
                             plugins: [
                               PopupMarkerPlugin(),

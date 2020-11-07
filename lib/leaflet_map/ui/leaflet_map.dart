@@ -50,6 +50,7 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
   @override
   void dispose() {
     print("leflet map got disposed");
+    _lefletmapBloc.close();
     super.dispose();
   }
 
@@ -219,6 +220,20 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
     _animatedMapMoveBack(_previousPoint, _previousPointZoom);
   }
 
+  void _moveToDetailsPage(LatLng latLng) {
+    Place place = _places
+        .where((place) =>
+            place.latitude == latLng.latitude &&
+            place.latitude == latLng.latitude)
+        .single;
+    _popupController.hidePopup();
+    var x = Navigator.pushNamed(context, RouteName.placeDetailsPage,
+        arguments: {"place": place});
+    x.whenComplete(() {
+      _animateBackToFitZoom();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -229,6 +244,7 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
             children: [
               BlocBuilder<LefletmapBloc, LefletmapState>(
                 builder: (context, state) {
+                  print("bloc builder called ");
                   if (state is LefletmapInitialState) {
                     _places = state.places;
                     _category = state.placeCategory;
@@ -241,10 +257,10 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
                     _generateMarkers(_places);
                   }
 
-                  if (state is MapDetailsPageRequestState) {
+                  /*if (state is MapDetailsPageRequestState) {
                     Navigator.pushNamed(context, RouteName.anotherpage,
                         arguments: {"place": state.place});
-                  }
+                  }*/
                   return Visibility(
                     visible: true,
                     child: Flexible(
@@ -272,7 +288,9 @@ class _LeafLetMapHomePageState extends State<LeafLetMapHomePage>
                           /*MarkerLayerOptions(markers: _mapMarkers) , */
                           PopupMarkerLayerOptions(
                             popupBuilder: (BuildContext _ctx, Marker marker) =>
-                                ExamplePopup(marker),
+                                ExamplePopup(
+                                    marker: marker,
+                                    detailesButtonPressed: _moveToDetailsPage),
                             popupController: _popupController,
                             markers: _mapMarkers,
                           )

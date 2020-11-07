@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_to_render/leaflet_map/bloc/leflet_bloc/lefletmap_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong/latlong.dart';
 
 class ExamplePopup extends StatefulWidget {
   final Marker marker;
+  final ValueChanged<LatLng> detailesButtonPressed;
 
-  ExamplePopup(this.marker, {Key key}) : super(key: key);
+  ExamplePopup(
+      {@required this.marker, Key key, @required this.detailesButtonPressed})
+      : assert(marker != null),
+        assert(detailesButtonPressed != null),
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ExamplePopupState(this.marker);
@@ -75,8 +81,7 @@ class _ExamplePopupState extends State<ExamplePopup> {
             ),
             FlatButton(
               onPressed: () {
-                BlocProvider.of<LefletmapBloc>(context)
-                    .add(MapDetailsPageRequestEvent(point: _marker.point));
+                widget.detailesButtonPressed(_marker.point);
               },
               child: Text(
                 "Details",

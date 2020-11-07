@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_to_render/authentication/authentication_bloc.dart';
 import 'package:flutter_app_to_render/leaflet_map/ui/leaflet_map.dart';
+import 'package:flutter_app_to_render/leaflet_map/ui/moving_card_ui.dart';
 import 'package:flutter_app_to_render/leaflet_map/ui/page_details.dart';
 import 'package:flutter_app_to_render/place_tracker/domain/place.dart';
 import 'package:flutter_app_to_render/place_tracker/ui/place_tracker_home.dart';
 import 'package:flutter_app_to_render/route/route_name.dart';
 import 'package:flutter_app_to_render/ui/another_page.dart';
 import 'package:flutter_app_to_render/ui/splash_page.dart';
+import 'package:flutter_app_to_render/ui/stream_learning_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
@@ -61,6 +63,13 @@ class RouteGenerator {
           );
         }
         break;
+
+      case RouteName.movingCarPage:
+        return MaterialPageRoute(builder: (_) => CarMovement());
+        break;
+
+      case RouteName.learningStreams:
+        return MaterialPageRoute(builder: (_) => StreamLearning());
 
       default:
         return _errorRoute();

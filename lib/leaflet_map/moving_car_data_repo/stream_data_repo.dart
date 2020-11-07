@@ -18,12 +18,14 @@ class StreamDataRepo {
     double lat = 45.51022;
     double lon = -122.69704;
     _incrementValue() {
-      lat = lat - 0.10000;
-      lon = lon + 0.10000;
+      lat = lat - 0.00500;
+      lon = lon + 0.00500;
     }
 
     void _startTime() {
       /// timer has been started
+      print("timer has been started");
+
       _timer = Timer.periodic(duration, (timer) {
         _incrementValue();
         _controller.add(LatLng(lat, lon));
@@ -42,6 +44,24 @@ class StreamDataRepo {
         onResume: _startTime,
         onPause: _stopTime,
         onCancel: _stopTime);
+
+    return _controller.stream;
+  }
+
+  static Stream<LatLng> getMovingData2(Duration duration) {
+    final StreamController<LatLng> _controller = StreamController<LatLng>();
+
+    double lat = 45.51022;
+    double lon = -122.69704;
+    _incrementValue() {
+      lat = lat - 0.00500;
+      lon = lon + 0.00500;
+    }
+
+    for (var i = 0; i < 1000; i++) {
+      _incrementValue();
+      _controller.add(LatLng(lat, lon));
+    }
 
     return _controller.stream;
   }

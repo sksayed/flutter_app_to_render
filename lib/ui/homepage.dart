@@ -183,6 +183,23 @@ class _HomePageState extends State<HomePage> {
                     Navigator.pushNamed(context, RouteName.leafletMapHomePage);
                   },
                 ),
+
+                ListTile(
+                  title: Text("Moving Car"),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.pushNamed(context, RouteName.movingCarPage);
+                  },
+                ),
+                ListTile(
+                  title: Text("Learning Streams"),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.pushNamed(context, RouteName.learningStreams);
+                  },
+                ),
               ],
             ),
           ),

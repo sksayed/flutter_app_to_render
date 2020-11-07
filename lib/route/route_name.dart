@@ -5,4 +5,6 @@ class RouteName {
   static const String placeTrackerHomePage = "/placeTrackerHomePage";
   static const String leafletMapHomePage = "/leafletMapHomePage";
   static const String placeDetailsPage = "/placeDetails";
+  static const String movingCarPage = "/movingCarPage";
+  static const String learningStreams = "/learningStreams";
 }
